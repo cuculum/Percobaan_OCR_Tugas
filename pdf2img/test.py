@@ -5,7 +5,7 @@ import pandas as pd
 import os
 
 # path tesseract (WAJIB di Windows)
-pytesseract.pytesseract.tesseract_cmd = r"C:\test program\tesseract\tesseract.exe"
+# pytesseract.pytesseract.tesseract_cmd = r"C:\test program\tesseract\tesseract.exe"
 
 # load image
 img = cv2.imread("page_0.png")
