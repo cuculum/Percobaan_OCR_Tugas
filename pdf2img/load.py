@@ -27,7 +27,7 @@ deskew = cv2.warpAffine(thresh, M, (w, h),
                         flags=cv2.INTER_CUBIC,
                         borderMode=cv2.BORDER_REPLICATE)
 
-kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1,1))
+kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2,2))
 processed = cv2.morphologyEx(deskew, cv2.MORPH_CLOSE, kernel)
 
 cv2.imwrite("processed.png", processed)
