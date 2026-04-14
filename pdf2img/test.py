@@ -67,7 +67,7 @@ for cnt in contours:
                 continue
 
             y_pos = data["top"][i]
-            row_key = y_pos // 10
+            row_key = y_pos // 20
 
             if row_key not in rows:
                 rows[row_key] = []
