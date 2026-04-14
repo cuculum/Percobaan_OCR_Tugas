@@ -62,23 +62,36 @@ for cnt in contours:
 
         for i in range(len(data["text"])):
             text = data["text"][i].strip()
-
             if text == "":
                 continue
 
-            y_pos = data["top"][i]
-            row_key = y_pos // 20
+            curr_y = data["top"][i]
+            curr_x = data["left"][i]      
+            
+            # Cari apakah teks ini masuk ke baris yang sudah ada
+            found_row = False
+            for row in rows:
 
-            if row_key not in rows:
-                rows[row_key] = []
+                #Jika jarak Y teks ini dengan rata-rata Y di baris terebut kecil (misal < 20px)
+                if abs(curr_y - row['avg_y']) < 20:
+                    row['elements'].append((curr_x, text))
 
-            rows[row_key].append((data["left"][i], text))
+                    # Update rata-rata Y baris agar akurat
+                    row['avg_y'] = (row[avg_y] + curr_y) / 2
+                    found_row = True
+                    break                   
+            
+            # Jika tidak masuk baris manapun, buar garis baru
+            if not found_row:
+                rows.append({'avg_y': curr_y, 'elements': [(curr_x, text)]})
 
+        #Konversi list 'rows' menjadi format tabel untuk DataFrame
         table = []
+        for row in rows:
 
-        for row in sorted(rows.keys()):
-            cols = sorted(rows[row], key=lambda x: x[0])
-            table.append([text for _, text in cols])
+            #Urutkan elemen dalam baris berdasarkan posisi X (kiri ke kanan)
+            sorted_cols = sorted(row['elements'], key=lambda x: x[0])
+            table.append([text for _, text in sorted_cols])
 
         df = pd.DataFrame(table)
 
