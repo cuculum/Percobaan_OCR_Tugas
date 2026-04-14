@@ -26,7 +26,7 @@ table_mask = cv2.add(horizontal, vertical)
 # cari kontur tabel
 contours, _ = cv2.findContours(table_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-os.makedirs("tables", exist_ok=True)
+os.makedirs("table", exist_ok=True)
 
 all_tables = []
 
@@ -58,7 +58,7 @@ for cnt in contours:
         # =====================
         data = pytesseract.image_to_data(resized, output_type=pytesseract.Output.DICT)
 
-        rows = {}
+        rows = []
 
         for i in range(len(data["text"])):
             text = data["text"][i].strip()
