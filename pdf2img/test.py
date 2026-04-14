@@ -77,7 +77,7 @@ for cnt in contours:
                     row['elements'].append((curr_x, text))
 
                     # Update rata-rata Y baris agar akurat
-                    row['avg_y'] = (row[avg_y] + curr_y) / 2
+                    row['avg_y'] = (row['avg_y'] + curr_y) / 2
                     found_row = True
                     break                   
             
