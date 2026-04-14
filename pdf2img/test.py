@@ -26,7 +26,7 @@ table_mask = cv2.add(horizontal, vertical)
 # cari kontur tabel
 contours, _ = cv2.findContours(table_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-os.makedirs("table", exist_ok=True)
+os.makedirs("tabel", exist_ok=True)
 
 all_tables = []
 
