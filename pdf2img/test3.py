@@ -3,13 +3,13 @@ import cv2
 import re
 import numpy as np
 import pandas as pd
-from paddleocr import PPStructure, save_structure_res
+from paddleocr import PPStructureV3
 
 
 # 1. GLOBAL INITIALIZATION
 # Model AI dimuat satu kali di awal agar eksekusi berikutnya jauh lebih cepat.
 print("[INFO] Menginisialisasi AI Engine (PP-Structure)... Mohon tunggu.")
-TABLE_ENGINE = PPStructure(show_log=False, image_orientation=True, lang='en')
+TABLE_ENGINE = PPStructureV3 ()
 
 # 2. SUPPORTING FUNCTIONS (Fungsi Pendukung)
 def preprocess_image(image_path):
@@ -102,7 +102,7 @@ def run_png_to_excel(image_path, output_dir="hasil_ekstraksi"):
                 print(f"    [ERROR] Gagal memproses tabel ke-{table_count}: {e}")
 
     # E. Simpan Visualisasi kotak deteksi
-    save_structure_res(result, processed_img, output_dir, vis_dir)
+    # save_structure_res(result, processed_img, output_dir, vis_dir)
     
     return table_count
 
