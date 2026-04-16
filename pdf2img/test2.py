@@ -1,5 +1,6 @@
 import os
 import re
+from io import StringIO
 import cv2
 import numpy as np
 import pandas as pd
@@ -110,6 +111,83 @@ def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def flatten_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Ubah header MultiIndex menjadi 1 level agar aman ditulis ke Excel.
+    """
+    if df is None or df.empty:
+        return df
+
+    if isinstance(df.columns, pd.MultiIndex):
+        flattened_cols = []
+        for col in df.columns:
+            parts = [str(part).strip() for part in col if pd.notna(part)]
+            parts = [p for p in parts if p and p.lower() != 'nan']
+            flattened_cols.append(" | ".join(parts) if parts else "column")
+        df.columns = flattened_cols
+    else:
+        df.columns = [str(col).strip() for col in df.columns]
+
+    # Pastikan nama kolom unik
+    seen = {}
+    unique_cols = []
+    for col in df.columns:
+        base = col if col else "column"
+        seen[base] = seen.get(base, 0) + 1
+        unique_cols.append(base if seen[base] == 1 else f"{base}_{seen[base]}")
+    df.columns = unique_cols
+    return df
+
+
+def parse_table_html(html_content: str) -> pd.DataFrame | None:
+    """
+    Parse HTML tabel dengan beberapa strategi agar hasil lebih stabil.
+    """
+    candidates = []
+    parse_variants = [
+        {"header": 0},
+        {"header": None},
+    ]
+
+    for variant in parse_variants:
+        try:
+            tables = pd.read_html(StringIO(html_content), **variant)
+            candidates.extend(tables)
+        except Exception:
+            continue
+
+    if not candidates:
+        return None
+
+    # Pilih kandidat dengan isi non-kosong terbanyak.
+    best_df = None
+    best_score = -1
+    for cand in candidates:
+        score = cand.replace("", np.nan).notna().sum().sum()
+        if score > best_score:
+            best_score = score
+            best_df = cand
+
+    if best_df is None:
+        return None
+
+    best_df = flatten_columns(best_df)
+    best_df = clean_dataframe(best_df)
+
+    # Hapus baris yang identik dengan header (sering muncul dari OCR tabel bertingkat).
+    if not best_df.empty:
+        header_vals = [str(c).strip().lower() for c in best_df.columns]
+        drop_rows = []
+        for idx, row in best_df.iterrows():
+            row_vals = [str(v).strip().lower() for v in row.tolist()]
+            if row_vals == header_vals:
+                drop_rows.append(idx)
+        if drop_rows:
+            best_df = best_df.drop(index=drop_rows)
+
+    return best_df.reset_index(drop=True)
+
+
 # ─────────────────────────────────────────────
 # 3. FUNGSI UTAMA
 # ─────────────────────────────────────────────
@@ -164,12 +242,11 @@ def run_png_to_excel(image_path: str, output_dir: str = "hasil_ekstraksi") -> in
                 print(f"    [WARN] Tidak ada data HTML di tabel {table_count}")
                 continue
 
-            # Parse HTML → DataFrame
-            df_list = pd.read_html(html_content)
-            if not df_list:
+            # Parse HTML → DataFrame (dengan fallback strategy)
+            df = parse_table_html(html_content)
+            if df is None or df.empty:
+                print(f"    [WARN] Gagal parsing HTML tabel {table_count}")
                 continue
-
-            df = clean_dataframe(df_list[0])
 
             # Validasi ukuran tabel minimal 2 baris × 1 kolom
             if df.shape[0] < 2 or df.shape[1] < 1:
