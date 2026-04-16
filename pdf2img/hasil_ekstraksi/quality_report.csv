@@ -1,0 +1,15 @@
+filename,tables_detected,tables_saved,best_mode,avg_quality_score,error_count,elapsed_sec
+table_0.png,0,0,none,0.0,0,0.615
+table_1.png,0,0,none,0.0,0,1.141
+table_10.png,1,1,low_contrast,0.5,0,6.17
+table_11.png,0,0,none,0.0,0,16.164
+table_12.png,1,1,noisy_table_lines,0.7613,0,17.793
+table_13.png,0,0,none,0.0,0,1.167
+table_2.png,0,0,none,0.0,0,2.112
+table_3.png,0,0,fatal_error,0.0,1,0.0
+table_4.png,1,1,noisy_table_lines,0.8583,0,3.387
+table_5.png,1,1,balanced,0.925,0,17.174
+table_6.png,1,1,balanced,0.5667,0,11.662
+table_7.png,1,0,noisy_table_lines,0.8417,0,2.752
+table_8.png,1,1,balanced,0.9188,0,19.053
+table_9.png,1,1,balanced,0.9443,0,39.704
