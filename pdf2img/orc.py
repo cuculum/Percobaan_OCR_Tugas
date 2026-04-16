@@ -138,6 +138,56 @@ def generate_preprocess_variants(image_path: str) -> list[tuple[str, np.ndarray]
     return variants
 
 
+def detect_table_grid_stats(img: np.ndarray) -> dict[str, Any]:
+    """
+    Estimasi struktur grid tabel dari garis horizontal/vertikal.
+    """
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    bin_img = cv2.adaptiveThreshold(
+        gray,
+        255,
+        cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+        cv2.THRESH_BINARY_INV,
+        15,
+        5,
+    )
+
+    h, w = bin_img.shape[:2]
+    vertical_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, max(18, h // 25)))
+    horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (max(18, w // 25), 1))
+
+    vertical = cv2.morphologyEx(bin_img, cv2.MORPH_OPEN, vertical_kernel, iterations=1)
+    horizontal = cv2.morphologyEx(bin_img, cv2.MORPH_OPEN, horizontal_kernel, iterations=1)
+
+    v_count, _, v_stats, _ = cv2.connectedComponentsWithStats(vertical, connectivity=8)
+    h_count, _, h_stats, _ = cv2.connectedComponentsWithStats(horizontal, connectivity=8)
+
+    # komponen dengan panjang signifikan dihitung sebagai garis.
+    vertical_lines = 0
+    for i in range(1, v_count):
+        x, y, ww, hh, area = v_stats[i]
+        if hh > h * 0.2 and ww <= max(10, w * 0.03) and area > 30:
+            vertical_lines += 1
+
+    horizontal_lines = 0
+    for i in range(1, h_count):
+        x, y, ww, hh, area = h_stats[i]
+        if ww > w * 0.2 and hh <= max(10, h * 0.03) and area > 30:
+            horizontal_lines += 1
+
+    estimated_cols = max(vertical_lines - 1, 1) if vertical_lines >= 2 else 0
+    estimated_rows = max(horizontal_lines - 1, 1) if horizontal_lines >= 2 else 0
+    confidence = min((vertical_lines + horizontal_lines) / 24.0, 1.0)
+
+    return {
+        "vertical_lines": int(vertical_lines),
+        "horizontal_lines": int(horizontal_lines),
+        "estimated_cols": int(estimated_cols),
+        "estimated_rows": int(estimated_rows),
+        "grid_confidence": round(float(confidence), 4),
+    }
+
+
 def normalize_text_cell(value: Any) -> Any:
     """
     Normalisasi teks OCR untuk mengurangi karakter liar/non-latin.
@@ -150,6 +200,14 @@ def normalize_text_cell(value: Any) -> Any:
     text = re.sub(r"[\u4e00-\u9fff]+", "", text)  # buang karakter CJK
     text = re.sub(r"\s{2,}", " ", text).strip()
     text = re.sub(r"[|~_\[\]\{\}\^]", "", text)
+
+    # Confusable characters (kontekstual, konservatif).
+    if re.search(r"\d", text):
+        text = re.sub(r"(?<=\d)[oO](?=\d)", "0", text)
+        text = re.sub(r"(?<=\d)[lI](?=\d)", "1", text)
+        text = re.sub(r"(?<=\d)B(?=\d)", "8", text)
+    if re.search(r"[A-Za-z]", text):
+        text = re.sub(r"(?<=[A-Za-z])0(?=[A-Za-z])", "O", text)
 
     # Koreksi kata OCR umum pada laporan keuangan (konservatif)
     token_replacements = {
@@ -181,6 +239,10 @@ def parse_accounting_number(value: Any) -> Any:
     is_negative = text.startswith("(") and text.endswith(")")
     if is_negative:
         text = text[1:-1]
+
+    text = re.sub(r"\s+", " ", text)
+    text = text.replace("O", "0").replace("o", "0")
+    text = re.sub(r"(?<=\d)[lI](?=\d)", "1", text)
 
     # hanya parse bila string dominan numerik/pemisah
     if not re.fullmatch(r"[\d\s.,\-]+", text):
@@ -285,6 +347,11 @@ def maybe_promote_first_row_as_header(df: pd.DataFrame) -> pd.DataFrame:
     if len(valid) < max(2, len(df.columns) // 2):
         return df
 
+    # Jika baris pertama dominan numerik, besar kemungkinan itu data bukan header.
+    numeric_cells = sum(bool(re.search(r"\d", v)) for v in candidate if v)
+    if numeric_cells > len(candidate) * 0.6:
+        return df
+
     seen: dict[str, int] = {}
     new_cols = []
     for col in candidate:
@@ -294,6 +361,44 @@ def maybe_promote_first_row_as_header(df: pd.DataFrame) -> pd.DataFrame:
 
     body = df.iloc[1:].copy()
     body.columns = new_cols
+    return body.reset_index(drop=True)
+
+
+def merge_two_header_rows(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Gabungkan dua baris awal jika keduanya terlihat seperti header bertingkat.
+    """
+    if df is None or df.empty or len(df) < 2:
+        return df
+
+    row0 = [str(v).strip() for v in df.iloc[0].tolist()]
+    row1 = [str(v).strip() for v in df.iloc[1].tolist()]
+    row0_alpha = sum(bool(re.search(r"[A-Za-z]", v)) for v in row0 if v)
+    row1_alpha = sum(bool(re.search(r"[A-Za-z]", v)) for v in row1 if v)
+    row0_num = sum(bool(re.search(r"\d", v)) for v in row0 if v)
+    row1_num = sum(bool(re.search(r"\d", v)) for v in row1 if v)
+
+    # Dua baris awal dianggap header bila dominan label non-angka.
+    if (row0_alpha + row1_alpha) < max(2, len(df.columns) // 2):
+        return df
+    if (row0_num + row1_num) > len(df.columns) * 1.2:
+        return df
+
+    merged = []
+    for left, right in zip(row0, row1):
+        lv = left if left and left.lower() != "nan" else ""
+        rv = right if right and right.lower() != "nan" else ""
+        merged_name = f"{lv} {rv}".strip()
+        merged.append(merged_name if merged_name else "column")
+
+    seen: dict[str, int] = {}
+    final_cols = []
+    for col in merged:
+        seen[col] = seen.get(col, 0) + 1
+        final_cols.append(col if seen[col] == 1 else f"{col}_{seen[col]}")
+
+    body = df.iloc[2:].copy()
+    body.columns = final_cols
     return body.reset_index(drop=True)
 
 
@@ -316,7 +421,7 @@ def remove_duplicate_header_rows(df: pd.DataFrame) -> pd.DataFrame:
     return df.reset_index(drop=True)
 
 
-def dataframe_quality_score(df: pd.DataFrame) -> float:
+def dataframe_quality_score(df: pd.DataFrame, grid_stats: dict[str, Any] | None = None) -> float:
     """
     Skor sederhana untuk menilai kualitas tabel hasil parsing.
     """
@@ -327,18 +432,52 @@ def dataframe_quality_score(df: pd.DataFrame) -> float:
     total_cells = max(rows * cols, 1)
     non_empty = df.replace("", np.nan).notna().sum().sum()
     fill_ratio = non_empty / total_cells
+    row_non_empty = df.replace("", np.nan).notna().sum(axis=1)
+    row_consistency = 0.0
+    if len(row_non_empty) > 0:
+        row_consistency = 1.0 - (row_non_empty.std(ddof=0) / max(cols, 1))
+        row_consistency = float(np.clip(row_consistency, 0.0, 1.0))
+
+    numeric_like = df.applymap(
+        lambda v: bool(re.search(r"\d", str(v))) if not pd.isna(v) else False
+    )
+    numeric_ratio = float(numeric_like.sum().sum() / total_cells)
 
     # Penalti jika terlalu banyak kolom "column"/duplikat pseudo header
     generic_cols = sum(str(col).lower().startswith("column") for col in df.columns)
     generic_penalty = generic_cols / max(cols, 1)
+    long_text_penalty = 0.0
+    if cols == 1:
+        avg_len = float(df.iloc[:, 0].astype(str).str.len().mean())
+        long_text_penalty = min(avg_len / 40.0, 1.0)
+
+    grid_alignment_bonus = 0.0
+    grid_mismatch_penalty = 0.0
+    if grid_stats and grid_stats.get("grid_confidence", 0.0) >= 0.2:
+        expected_cols = int(grid_stats.get("estimated_cols", 0))
+        if expected_cols > 0:
+            if cols == expected_cols:
+                grid_alignment_bonus = 0.2
+            else:
+                diff_ratio = abs(cols - expected_cols) / max(expected_cols, 1)
+                grid_mismatch_penalty = min(diff_ratio, 1.0) * 0.25
 
     # Bonus untuk tabel yang cukup lebar/tinggi
     structure_bonus = min(rows / 12, 1.0) * 0.2 + min(cols / 8, 1.0) * 0.2
-    score = (fill_ratio * 0.8 + structure_bonus) - (generic_penalty * 0.25)
+    score = (
+        fill_ratio * 0.55
+        + structure_bonus
+        + row_consistency * 0.15
+        + min(numeric_ratio, 0.4) * 0.15
+        + grid_alignment_bonus
+        - generic_penalty * 0.2
+        - long_text_penalty * 0.25
+        - grid_mismatch_penalty
+    )
     return round(max(score, 0.0), 4)
 
 
-def parse_table_html(html_content: str) -> pd.DataFrame | None:
+def parse_table_html(html_content: str, grid_stats: dict[str, Any] | None = None) -> pd.DataFrame | None:
     """
     Parse HTML tabel dengan beberapa strategi agar hasil lebih stabil.
     """
@@ -364,10 +503,11 @@ def parse_table_html(html_content: str) -> pd.DataFrame | None:
     best_score = -1
     for cand in candidates:
         cand = flatten_columns(cand)
+        cand = merge_two_header_rows(cand)
         cand = maybe_promote_first_row_as_header(cand)
         cand = clean_dataframe(cand)
         cand = remove_duplicate_header_rows(cand)
-        score = dataframe_quality_score(cand)
+        score = dataframe_quality_score(cand, grid_stats=grid_stats)
         if score > best_score:
             best_score = score
             best_df = cand
@@ -414,6 +554,44 @@ def write_styled_excel(raw_df: pd.DataFrame, clean_df: pd.DataFrame, excel_path:
     workbook.save(excel_path)
 
 
+def write_raw_only_excel(raw_df: pd.DataFrame, excel_path: str):
+    """
+    Simpan hanya sheet raw ketika quality gate gagal.
+    """
+    with pd.ExcelWriter(excel_path, engine="openpyxl") as writer:
+        raw_df.to_excel(writer, sheet_name="raw_extraction", index=False)
+
+
+def apply_quality_gate(clean_df: pd.DataFrame, grid_stats: dict[str, Any] | None = None) -> tuple[bool, list[str]]:
+    """
+    Validasi kualitas minimum sebelum ekspor final.
+    """
+    reasons = []
+    if clean_df is None or clean_df.empty:
+        reasons.append("dataframe kosong")
+        return False, reasons
+
+    rows, cols = clean_df.shape
+    if rows < 2:
+        reasons.append("baris kurang dari 2")
+
+    empty_ratio = 1.0 - (clean_df.replace("", np.nan).notna().sum().sum() / max(rows * cols, 1))
+    if empty_ratio > 0.78:
+        reasons.append(f"rasio kosong terlalu tinggi ({empty_ratio:.2f})")
+
+    if cols == 1:
+        avg_text_len = float(clean_df.iloc[:, 0].astype(str).str.len().mean())
+        if avg_text_len > 22:
+            reasons.append("indikasi collapse satu kolom")
+
+    if grid_stats and grid_stats.get("grid_confidence", 0.0) >= 0.2:
+        expected_cols = int(grid_stats.get("estimated_cols", 0))
+        if expected_cols > 1 and cols == 1:
+            reasons.append(f"grid mendeteksi {expected_cols} kolom, hasil hanya 1 kolom")
+
+    return len(reasons) == 0, reasons
+
+
 # ─────────────────────────────────────────────
 # 3. FUNGSI UTAMA
 # ─────────────────────────────────────────────
@@ -434,9 +612,11 @@ def run_png_to_excel(image_path: str, output_dir: str = "hasil_ekstraksi") -> di
         return {
             "tables_detected": 0,
             "tables_saved": 0,
+            "tables_skipped_by_gate": 0,
             "best_mode": "none",
             "avg_quality_score": 0.0,
             "error_count": 1,
+            "gate_log_count": 0,
             "elapsed_sec": 0.0,
         }
 
@@ -448,6 +628,7 @@ def run_png_to_excel(image_path: str, output_dir: str = "hasil_ekstraksi") -> di
     best_candidate: dict[str, Any] | None = None
     variant_errors = 0
     for mode_name, processed_img in variants:
+        grid_stats = detect_table_grid_stats(processed_img)
         try:
             result = TABLE_ENGINE(processed_img)
         except Exception as e:
@@ -475,12 +656,14 @@ def run_png_to_excel(image_path: str, output_dir: str = "hasil_ekstraksi") -> di
                 continue
             raw_df = flatten_columns(raw_list[0])
 
-            clean_df = parse_table_html(html_content)
+            clean_df = parse_table_html(html_content, grid_stats=grid_stats)
             if clean_df is None or clean_df.empty:
                 continue
 
-            quality = dataframe_quality_score(clean_df)
-            current_tables.append({"raw_df": raw_df, "clean_df": clean_df, "quality": quality})
+            quality = dataframe_quality_score(clean_df, grid_stats=grid_stats)
+            current_tables.append(
+                {"raw_df": raw_df, "clean_df": clean_df, "quality": quality, "grid_stats": grid_stats}
+            )
 
         if not current_tables:
             continue
@@ -511,31 +694,47 @@ def run_png_to_excel(image_path: str, output_dir: str = "hasil_ekstraksi") -> di
         return {
             "tables_detected": 0,
             "tables_saved": 0,
+            "tables_skipped_by_gate": 0,
             "best_mode": "none",
             "avg_quality_score": 0.0,
             "error_count": variant_errors,
+            "gate_log_count": 0,
             "elapsed_sec": elapsed,
         }
 
     saved_count = 0
+    skipped_by_gate = 0
+    gate_logs = []
     for idx, table in enumerate(best_candidate["tables"], start=1):
         clean_df = table["clean_df"]
         raw_df = table["raw_df"]
+        grid_stats = table.get("grid_stats", {})
 
         if clean_df.shape[0] < 2 or clean_df.shape[1] < 1:
             print(f"    [WARN] Tabel {idx} terlalu kecil, dilewati")
             continue
 
         try:
+            gate_ok, reasons = apply_quality_gate(clean_df, grid_stats=grid_stats)
             excel_path = os.path.join(output_dir, f"tabel_{idx}.xlsx")
-            write_styled_excel(raw_df, clean_df, excel_path)
+            if gate_ok:
+                write_styled_excel(raw_df, clean_df, excel_path)
+            else:
+                skipped_by_gate += 1
+                write_raw_only_excel(raw_df, excel_path)
+                reason_text = "; ".join(reasons)
+                gate_logs.append({"table": idx, "reasons": reasons})
+                print(f"    [WARN] Quality gate skip tabel {idx}: {reason_text}")
 
             csv_path = os.path.join(output_dir, f"tabel_{idx}.csv")
-            clean_df.to_csv(csv_path, index=False)
-            saved_count += 1
-            print(
-                f"    [SUCCESS] tabel_{idx}.xlsx tersimpan ({clean_df.shape[0]} baris × {clean_df.shape[1]} kolom)"
-            )
+            if gate_ok:
+                clean_df.to_csv(csv_path, index=False)
+                saved_count += 1
+                print(
+                    f"    [SUCCESS] tabel_{idx}.xlsx tersimpan ({clean_df.shape[0]} baris × {clean_df.shape[1]} kolom)"
+                )
+            else:
+                raw_df.to_csv(csv_path, index=False)
         except Exception as e:
             print(f"    [ERROR] Gagal menyimpan tabel {idx}: {str(e)[:120]}")
 
@@ -547,9 +746,11 @@ def run_png_to_excel(image_path: str, output_dir: str = "hasil_ekstraksi") -> di
     return {
         "tables_detected": int(best_candidate["detected"]),
         "tables_saved": int(saved_count),
+        "tables_skipped_by_gate": int(skipped_by_gate),
         "best_mode": best_candidate["mode_name"],
         "avg_quality_score": float(round(best_candidate["avg_score"], 4)),
         "error_count": int(variant_errors),
+        "gate_log_count": int(len(gate_logs)),
         "elapsed_sec": elapsed,
     }
 
@@ -596,6 +797,7 @@ if __name__ == "__main__":
                     print(
                         f"    Selesai. ditemukan={summary['tables_detected']}, "
                         f"tersimpan={summary['tables_saved']}, "
+                        f"gate_skip={summary['tables_skipped_by_gate']}, "
                         f"mode={summary['best_mode']}, "
                         f"durasi={summary['elapsed_sec']}s"
                     )
@@ -609,9 +811,11 @@ if __name__ == "__main__":
                         "filename": filename,
                         "tables_detected": 0,
                         "tables_saved": 0,
+                        "tables_skipped_by_gate": 0,
                         "best_mode": "fatal_error",
                         "avg_quality_score": 0.0,
                         "error_count": 1,
+                        "gate_log_count": 0,
                         "elapsed_sec": 0.0,
                     })
 

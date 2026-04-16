@@ -1,69 +1,64 @@
-No.,POS - POS,Unnamed: 2
-ASET Kas 1.,31-Des-25,365577193614272299008
-2. Penempatan pada Bank Indonesia,,31-Des-24 374.523 14.711.234 1.410.942
-3. Penempatan pada bank lain,,
-4. Tagihan spot dan derivatif/forward,,
-5. Surat berharga yang dimiliki,,78742258199413
-6,Surat berharga yang dijual dengan janji dibeli kembali (repo),400000163822106509312
-7,Tagihan atas surat berharga yang dibeli dengan janji dijual kembali (reverse repo),
-,,14497953648
-8,Tagihan akseptasi,108151752
-9,Kredit yang diberikan Pembiayaan syariah,
-10.1,,
-11. Penyertaan modal,,8966728
-12,Aset keuangan lainnya,4868748
-13,Cadangan kerugian penurunan nilai aset keuangan -/-,
-,a. Surat berharga yang dimiliki,-64
-,b. Kredit yang diberikan dan pembiayaan syariah,(1.315.082) (1.398.210)
-c. Lainnya,,(340) (690)
-14. Aset tidak berwujud,,
-,Akumulasi amortisasi aset tidak berwujud -/-,
-15. Aset tetap dan inventaris,,42851325383732
-,Akumulasi penyusutan aset tetap dan inventaris --,(1.290.371) (1.153.085)
-16.Aset non produktif,,
-,a. Properti terbengkalai,1070593
-,b. Agunan yang diambil alih,231768298913
-c. Rekening tunda,,
-,d. Aset antarkantor,
-17.Aset lainnya,,1361435910392374
-TOTAL ASET,,163825380150184160
-,LIABILITAS DAN EKUITAS,
-LIABILITAS,,
-1. Giro,,5841198491936709672960
-2. Tabungan,,10972734111295824
-3. Deposito,,121962256
-4,Uang elektronik,
-5,Liabiitas kepada Bank Indonesia,2970517
-6,Liabilitas kepada bank lain,1801048
-7,Liabilitas spot dan derivatif/forward,15
-8,Liabilitas atas surat berharga yang dijual dengan janji dibeli kembali (repo).,394.214
-9. Liabiitas akseptasi,,53648163822
-10,Surat berharga yang diterbitkan,801.632
-11.1,Pinjaman/pembiayaan yang diterima,600000880000
-12. Setoran jaminan,,46454103
-13. Liabilitas antarkantor,,
-14. Liabilitas annya,,43552632827285
-15. Kepentingan minoritas (minority interest),,
-TOTAL LiABILITAS,,146760261133244896
-EKUITAS,,
-16.Modal disetor,,
-a. Modal dasar,,53000005300000
-b. Modal yang belum disetor -/-,,(3.961.461) (3.961.461)
-c. Saham yang dibeli kembali (reasury stock) --,,
-17.Tambahan modal disetor,,
-a. Agio,,83648298364829
-b. Disagio -/-,,
-c. Dana setoran modal,,2144516
-d. Lainnya,,2144516
-18.Penghasilan komprehensif lain,,
-a. Keuntungan,,
-b. Kerugian --,,15966761538212
-19.Cadangan,,
-a. Cadangan umum,,131.6
-b. Cadangan tujuan,,132.6
-20. Laba/rugi,,3457984
-a. Tahun-tahun lalu,,3396001
-b. Tahun berjalan,,29.975
-,,25.573
-c. Dividen yang dibayarkan -/-,,
-TOTAL EKUITAS TOTAL LIABILITAS DAN EKUITAS,17065119163825380,16939270150184176
+1. Kas 2.,Penempatan pada Bank Indonesia,365.577 19.361.427,14.711.234
+3,Penempatan pada bank lain,2311049.0,1410942.0
+4,Tagihan spot dan derivatf/forward,,
+5,Surat berharga yang dimiliki,7874225.0,8199413.0
+6,Surat berharga yang dijual dengan janji dibeli kembali (repo),,400.0
+7,Tagihan atas surat berharga yang dibeli dengan janji dijual kembali (reverse repo),144.979,
+8,Tagihan akseptasi,53.648,163.822
+9,Kredit yang diberikan,108151752.0,106532459.0
+,10.Pembiayaan syariah,,
+,11. Penyertaan modal,,
+,12. Aset keuangan lainnya,8966728.0,4868748.0
+,13. Cadangan kerugian penurunan nilai aset keuangan -/-,,
+,a. Surat berharga yang dimiliki,-64.0,
+,b. Kredit yang diberikan dan pembiayaan syariah,-1315082.0,-1398210.0
+c. Lainnya,,-340.0,-690.0
+,14.Aset tidak berwujud,,
+,Akumulasi amortisasi aset tidak berwujud -/-,,
+,15. Aset tetap dan inventaris,4285132.0,5383732.0
+,Akumulasi penyusutan aset tetap dan inventaris -/-,-1290371.0,-1153085.0
+,16. Aset non produktif,,
+,a. Properti terbengkalai,1070593.0,
+,b. Agunan yang diambil alih,231.768,298.913
+,c. Rekening tunda,,
+,d. Aset antarkantor,,
+,17.Aset lainnya,13614359.0,1.0392374150184176e+16
+,TOTAL ASET,163825380.0,
+,LIABILITAS DAN EKUITAS LIABILITAS,,
+1. Giro,,,4919367.0
+2,.Tabungan,584119810972734.0,10157596.0
+3,Deposito,121962256.0,111295823.0
+4,Uang elektronik,,
+5,Liabilitas kepada Bank Indonesia,,
+6,Liabilitas kepada bank lain,2970517.0,1801048.0
+,Liabilitas spot dan derivatif/ forward,,15.0
+7,-Liabilitas atas surat berharga yang dijual dengan janji dibeli kembali (repo),,394.214
+89,.Liabilitas akseptasi,53.648,163.822
+,10.Surat berharga yang diterbitkan,,801.632
+,11. Pinjaman/pembiayaan yang diterima,600.0,880.0
+,12. Setoran jaminan,4.645,4.103
+,13.Liabilitas antarkantor,,
+,14.Liabilitas lainnya,4355263.0,2827285.0
+,15. Kepentingan minoritas (minority interest),,
+,TOTAL LiABILITAS,146760261.0,133244905.0
+EKUITAS,,,
+16.Modal disetor,,,
+,a. Modal dasar,5300000.0,5300000.0
+,b. Modal yang belum disetor -/-,-3961461.0,-3961461.0
+,c. Saham yang dibeli kembali (treasury stock) -/-,,
+,17.Tambahan modal disetor,,
+a. Agio,,8364829.0,8364829.0
+,b. Disagio --,,
+,c. Dana setoran modal,,
+,d. Lainnya,2144516.0,2144516.0
+,18.Penghasilan komprehensif lain,,
+,a. Keuntungan,,
+,b. Kerugian --,1596676.0,1538212.0
+,19.Cadangan,,
+,a. Cadangan umum,132.6,131.6
+,b. Cadangan tujuan,,
+20.Laba/rugi,Ja. Tahun-tahun lalu,3457984.0,
+,,,3396001.0
+,b. Tahun berjalan,29.975,25.573
+,c. Dividen yang dibayarkan -/-,,
+,TOTAL EKUITAS TOTAL LIABILITAS DAN EKUITAS,1.706511916382538e+16,1.6939270150184176e+16

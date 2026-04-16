@@ -3,126 +3,154 @@
     "filename": "table_0.png",
     "tables_detected": 0,
     "tables_saved": 0,
+    "tables_skipped_by_gate": 0,
     "best_mode": "none",
     "avg_quality_score": 0.0,
     "error_count": 0,
-    "elapsed_sec": 0.615
+    "gate_log_count": 0,
+    "elapsed_sec": 0.648
   },
   {
     "filename": "table_1.png",
     "tables_detected": 0,
     "tables_saved": 0,
+    "tables_skipped_by_gate": 0,
     "best_mode": "none",
     "avg_quality_score": 0.0,
     "error_count": 0,
-    "elapsed_sec": 1.141
+    "gate_log_count": 0,
+    "elapsed_sec": 1.271
   },
   {
     "filename": "table_10.png",
     "tables_detected": 1,
     "tables_saved": 1,
+    "tables_skipped_by_gate": 0,
     "best_mode": "low_contrast",
-    "avg_quality_score": 0.5,
+    "avg_quality_score": 0.225,
     "error_count": 0,
-    "elapsed_sec": 6.17
+    "gate_log_count": 0,
+    "elapsed_sec": 6.417
   },
   {
     "filename": "table_11.png",
     "tables_detected": 0,
     "tables_saved": 0,
+    "tables_skipped_by_gate": 0,
     "best_mode": "none",
     "avg_quality_score": 0.0,
     "error_count": 0,
-    "elapsed_sec": 16.164
+    "gate_log_count": 0,
+    "elapsed_sec": 17.944
   },
   {
     "filename": "table_12.png",
     "tables_detected": 1,
     "tables_saved": 1,
-    "best_mode": "noisy_table_lines",
-    "avg_quality_score": 0.7613,
+    "tables_skipped_by_gate": 0,
+    "best_mode": "low_contrast",
+    "avg_quality_score": 0.9782,
     "error_count": 0,
-    "elapsed_sec": 17.793
+    "gate_log_count": 0,
+    "elapsed_sec": 17.852
   },
   {
     "filename": "table_13.png",
     "tables_detected": 0,
     "tables_saved": 0,
+    "tables_skipped_by_gate": 0,
     "best_mode": "none",
     "avg_quality_score": 0.0,
     "error_count": 0,
-    "elapsed_sec": 1.167
+    "gate_log_count": 0,
+    "elapsed_sec": 1.198
   },
   {
     "filename": "table_2.png",
     "tables_detected": 0,
     "tables_saved": 0,
+    "tables_skipped_by_gate": 0,
     "best_mode": "none",
     "avg_quality_score": 0.0,
     "error_count": 0,
-    "elapsed_sec": 2.112
+    "gate_log_count": 0,
+    "elapsed_sec": 2.091
   },
   {
     "filename": "table_3.png",
     "tables_detected": 0,
     "tables_saved": 0,
+    "tables_skipped_by_gate": 0,
     "best_mode": "fatal_error",
     "avg_quality_score": 0.0,
     "error_count": 1,
+    "gate_log_count": 0,
     "elapsed_sec": 0.0
   },
   {
     "filename": "table_4.png",
     "tables_detected": 1,
-    "tables_saved": 1,
+    "tables_saved": 0,
+    "tables_skipped_by_gate": 0,
     "best_mode": "noisy_table_lines",
-    "avg_quality_score": 0.8583,
+    "avg_quality_score": 0.5871,
     "error_count": 0,
-    "elapsed_sec": 3.387
+    "gate_log_count": 0,
+    "elapsed_sec": 3.477
   },
   {
     "filename": "table_5.png",
     "tables_detected": 1,
-    "tables_saved": 1,
+    "tables_saved": 0,
+    "tables_skipped_by_gate": 1,
     "best_mode": "balanced",
-    "avg_quality_score": 0.925,
+    "avg_quality_score": 0.6464,
     "error_count": 0,
-    "elapsed_sec": 17.174
+    "gate_log_count": 1,
+    "elapsed_sec": 17.1
   },
   {
     "filename": "table_6.png",
     "tables_detected": 1,
     "tables_saved": 1,
+    "tables_skipped_by_gate": 0,
     "best_mode": "balanced",
-    "avg_quality_score": 0.5667,
+    "avg_quality_score": 0.3258,
     "error_count": 0,
-    "elapsed_sec": 11.662
+    "gate_log_count": 0,
+    "elapsed_sec": 11.888
   },
   {
     "filename": "table_7.png",
-    "tables_detected": 1,
+    "tables_detected": 0,
     "tables_saved": 0,
-    "best_mode": "noisy_table_lines",
-    "avg_quality_score": 0.8417,
+    "tables_skipped_by_gate": 0,
+    "best_mode": "none",
+    "avg_quality_score": 0.0,
     "error_count": 0,
-    "elapsed_sec": 2.752
+    "gate_log_count": 0,
+    "elapsed_sec": 2.807
   },
   {
     "filename": "table_8.png",
     "tables_detected": 1,
     "tables_saved": 1,
+    "tables_skipped_by_gate": 0,
     "best_mode": "balanced",
-    "avg_quality_score": 0.9188,
+    "avg_quality_score": 0.8563,
     "error_count": 0,
-    "elapsed_sec": 19.053
+    "gate_log_count": 0,
+    "elapsed_sec": 18.692
   },
   {
     "filename": "table_9.png",
     "tables_detected": 1,
     "tables_saved": 1,
+    "tables_skipped_by_gate": 0,
     "best_mode": "balanced",
-    "avg_quality_score": 0.9443,
+    "avg_quality_score": 1.1051,
     "error_count": 0,
-    "elapsed_sec": 39.704
+    "gate_log_count": 0,
+    "elapsed_sec": 38.144
   }
 ]

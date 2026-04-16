@@ -1,33 +1,31 @@
-Unnamed: 0,LAPORAN RASIO KEUANGAN Per 31 Desember 2025 dan 2024,Unnamed: 2,Unnamed: 3
-NO.,POS-POS,31-Des-25,( dalam jutaan rupiah ) 31-Des-24
-,RASIO KINERJA,,
-1,Kewajiban Penyediaan Modal Minimum (KPMM),10.10%,10.50%
-2,Aset produktif bermasalah dan aset non produktif bermasalah terhadap total aset produktif dan total aset non produktif,3.08%,3.10%
-3,Aset produktif bermasalah terhadap total aset produktif.,2.94%,"2,90%"
-4,Cadangan Kerugian Penurunan Nilai (CKPN) aset keuangan terhadap aset produktif,1.02%,1.14%
-5,NPL gross,3.67%,"3,47%"
-6,NPL net,2.89%,"2,63%"
-7,Return on Asset (ROA),0.03%,0.04%
-8,Return on Equity (ROE),0.23%,"0,19%"
-9,Net Interest Margin (NIM),2.81%,"2,10%"
-10,Biaya Operasional terhadap Pendapatan Operasional (BOPO),99.59%,99.51%
-11,Cost to Income Ratio (CIR),86.81%,"91,53%"
-12,Loan to Deposit Ratio (LDR),"77,65%",84.01%
-13,Net Stable Funding Ratio (NSFR),,
+NO.,POS-POS RASIO KINERJA,31-Des-25,( dalam jutaan rupiah ) 31-Des-24
+1.0,Kewajiban Penyediaan Modal Minimum (KPMM),10.10%,10.50%
+2.0,Aset produktif bermasalah dan aset non produktif bermasalah terhadap total aset produktif dan total aset non produktif,3.08%,3.10%
+3.0,Aset produktif bermasalah terhadap total aset produktif.,2.94%,"2,90%"
+4.0,Cadangan Kerugian Penurunan Nilai (CKPN) aset keuangan terhadap aset produktif,1.02%,1.14%
+5.0,NPL gross,3.67%,"3,47%"
+6.0,NPL net,2.89%,"2,63%"
+7.0,Return on Asset (ROA),0.03%,0.04%
+8.0,Return on Equity (ROE),0.23%,"0,19%"
+9.0,Net Interest Margin (NIM),2.81%,"2,10%"
+10.0,Biaya Operasional terhadap Pendapatan Operasional (BOPO),99.59%,99.51%
+11.0,Cost to Income Ratio (CIR),86.81%,"91,53%"
+12.0,Loan to Deposit Ratio (LDR),"77,65%",84.01%
+13.0,Net Stable Funding Ratio (NSFR),,
 ,a. NSFR secara Individu b. NSFR secara Konsolidasi,"147,62%","145,19%"
-14,Nilai Liquidity Coverage Ratio (LCR),,
+14.0,Nilai Liquidity Coverage Ratio (LCR),,
 ,a. LCR secara Individu b. LCR secara Konsolidasi,"139,19%","149,69%"
-15,Nilai Leverage Ratio (LR),,
+15.0,Nilai Leverage Ratio (LR),,
 ,a. LR secara Individu,8.73%,"9,30%"
 ,b. LR secara Konsolidasi.,,
 ,KEPATUHAN (COMPLIANCE),,
-1,a. Persentase Pelanggaran BMPK,,
+1.0,a. Persentase Pelanggaran BMPK,,
 ,i. Pihak Terkait,0.00%,"0,00%"
 ,ii. Pihak Tidak Terkait,0.00%,"0,00%"
 ,b. Persentase Pelampauan BMPK i. Pihak Terkaite,0.00%,"0,00%"
 ,ii. Pihak Tidak Terkait,0.00%,0.00%
-2,Giro Wajib Minimum (GWM),,
+2.0,Giro Wajib Minimum (GWM),,
 ,a.GwM utama rupiah,6.66%,"6,95%"
 ,. Harian,0.00%,0.00%
 ,. Rata-rata,6.66%,"6,95%"
-3,b. GWM valuta asing Posisi Devisa Neto (PDN) secara keseluruhan,4.35% 0.16%,"4,30% 0.17%"
+3.0,b. GWM valuta asing Posisi Devisa Neto (PDN) secara keseluruhan,4.35% 0.16%,"4,30% 0.17%"
