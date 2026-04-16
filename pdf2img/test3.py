@@ -3,13 +3,13 @@ import cv2
 import re
 import numpy as np
 import pandas as pd
-from paddleocr import PPStructureV3
+from paddleocr import PPStructure
 
 
 # 1. GLOBAL INITIALIZATION
 # Model AI dimuat satu kali di awal agar eksekusi berikutnya jauh lebih cepat.
 print("[INFO] Menginisialisasi AI Engine (PP-Structure)... Mohon tunggu.")
-TABLE_ENGINE = PPStructureV3 ()
+TABLE_ENGINE = PPStructure(layout=True, table=True, ocr=True, show_log=False, lang='en')
 
 # 2. SUPPORTING FUNCTIONS (Fungsi Pendukung)
 def preprocess_image(image_path):
