@@ -25,7 +25,6 @@ try:
         table=True,
         ocr=True,
         show_log=False,
-        lang='en',
     )
     print("[INFO] AI Engine siap!")
 except Exception as e:
